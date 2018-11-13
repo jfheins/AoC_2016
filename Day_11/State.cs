@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Day_11
 {
-    class State
+    internal class State : IEquatable<State>
     {
         /// <summary>
         /// By convention, the first item (index 0) is the elevator, every odd item is a generator and every even >0 a chip.
@@ -150,6 +150,16 @@ namespace Day_11
                     yield return new[] { set[i], set[j] };
                 }
             }
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as State);
+        }
+
+        public bool Equals(State other)
+        {
+            return other != null && Items.SequenceEqual(other.Items);
         }
     }
 }

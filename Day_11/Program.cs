@@ -22,6 +22,8 @@ namespace Day_11
             var historyStack = new Stack<State>();
             FindFinal(historyStack, initialState);
 
+            Console.WriteLine($"Best sequence has {currentBest} steps.");
+
             Console.ReadLine();
         }
 
