@@ -22,7 +22,7 @@ namespace Day_11
     class State
     {
         /// <summary>
-        /// By convention, the first item (index 0) is the elevator, every odd item is a generator and every even a chip.
+        /// By convention, the first item (index 0) is the elevator, every odd item is a generator and every even >0 a chip.
         /// The length of the array corresponds to the number of items, their value to the floor they're on.
         /// </summary>
         public int[] Items { get; private set; }
@@ -31,9 +31,18 @@ namespace Day_11
 
         public IEnumerable<String> FirstFloor => Items.Where(x => x == 1).Select(x => Desc[x]);
 
+        private readonly int[] _chipIndicies;
+        private readonly int[] _generatorIndicies;
+
+        private int[] chipLevels => _chipIndicies.Select(idx => Items[idx]).ToArray();
+        private int[] generatorLevels => _generatorIndicies.Select(idx => Items[idx]).ToArray();
+
         public State(IEnumerable<int> items)
         {
             Items = items.ToArray();
+            var nonElevatorIndicies = Enumerable.Range(1, Items.Length - 1).ToArray();
+            _chipIndicies = nonElevatorIndicies.Where(x => x % 2 == 0).ToArray();
+            _generatorIndicies = nonElevatorIndicies.Where(x => x % 2 == 1).ToArray();
         }
 
         /// <summary>
@@ -70,6 +79,7 @@ namespace Day_11
 
         public bool IsValid()
         {
+            // A chip must not be on the same level as a not-matching generator
             return true;
         }
     }
