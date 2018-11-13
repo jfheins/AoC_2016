@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Day_11
 {
@@ -14,6 +15,13 @@ namespace Day_11
             var initialState = State.FromString(input);
             Console.WriteLine("Initial State:");
             Console.WriteLine(initialState);
+
+            var nextStates = initialState.GetPossibleSuccessorStates().ToList();
+            foreach (var state in nextStates)
+            {
+                Console.WriteLine(state);
+            }
+
 
             Console.ReadLine();
         }
@@ -90,8 +98,6 @@ namespace Day_11
             if (Items.Count(x => x == elevatorLevel) <= 1)
                 return false;
 
-
-
             return true;
         }
 
@@ -99,30 +105,84 @@ namespace Day_11
         {
             return Items.All(x => x == 4);
         }
-    }
 
-    public interface IItem
-    {
-        string ToString();
-    }
-
-    public class Generator : IItem
-    {
-        public string Element { get; set; }
-
-        public override string ToString()
+        public int GetScore()
         {
-            return $"{Element} generator";
+            return Items.Skip(1).Sum();
+        }
+
+        public IEnumerable<State> GetPossibleSuccessorStates()
+        {
+            // The elevator can move up or down, and it can take 1 or 2 items with it.
+            var possibleMovements = new List<int>();
+            var elevatorLevel = Items[0];
+
+            if (elevatorLevel < 4)
+                possibleMovements.Add(1);
+            if (elevatorLevel > 1)
+                possibleMovements.Add(-1);
+
+            // THe List of the indicies of all possible subsets of items
+            var possibleTransitions = new List<Transition>();
+
+            var movableItemIndicies = Items
+                .IndexWhere(l => l == elevatorLevel)
+                .Where(x => x > 0) // Not interested in the elevator
+                .ToArray();
+
+            // They can move alone
+            possibleTransitions.AddRange(movableItemIndicies.SelectMany(i => GenerateTransitions(possibleMovements, i)));
+
+            if (movableItemIndicies.Length > 1)
+            {
+                var combinations = GenerateCombinationPairs(movableItemIndicies);
+                possibleTransitions.AddRange(combinations.SelectMany(pair => GenerateTransitions(possibleMovements, pair)));
+            }
+
+            return possibleTransitions.Select(Transform);
+        }
+
+        private static IEnumerable<Transition> GenerateTransitions(IEnumerable<int> movements, int ItemIndex)
+        {
+            return movements.Select(x => new Transition(x, new[] {ItemIndex}));
+        }
+
+        private static IEnumerable<Transition> GenerateTransitions(IEnumerable<int> movements, int[] ItemIndicies)
+        {
+            return movements.Select(x => new Transition(x, ItemIndicies));
+        }
+
+        public State Transform(Transition t)
+        {
+            var newState = Items.ToArray();
+            foreach (var idx in t.ItemIndicies)
+            {
+                newState[idx] += t.Direction;
+            }
+            return new State(newState);
+        }
+
+        private IEnumerable<int[]> GenerateCombinationPairs(int[] set)
+        {
+            for (int i = 0; i < set.Length - 1; i++)
+            {
+                for (int j = i+1; j < set.Length; j++)
+                {
+                    yield return new[] { set[i], set[j] };
+                }
+            }
         }
     }
 
-    public class Microchip
+    public struct Transition
     {
-        public string Element { get; set; }
+        public int Direction;
+        public int[] ItemIndicies;
 
-        public override string ToString()
+        public Transition(int direction, int[] itemIndicies)
         {
-            return $"{Element} chip";
+            Direction = direction;
+            ItemIndicies = itemIndicies;
         }
     }
 }
