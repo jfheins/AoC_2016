@@ -8,22 +8,41 @@ namespace Day_11
 {
     class Program
     {
+        private static int currentBest = 1000000;
+
         static void Main(string[] args)
         {
             var input = "1 2 1 3 1"; // Example
-
             var initialState = State.FromString(input);
+
+            var states = new List<State>();
+            states.Add(initialState);
+
             Console.WriteLine("Initial State:");
             Console.WriteLine(initialState);
 
-            var nextStates = initialState.GetPossibleSuccessorStates().ToList();
-            foreach (var state in nextStates)
-            {
-                Console.WriteLine(state);
-            }
-
+            var historyStack = new Stack<State>();
+            FindFinal(historyStack, initialState);
 
             Console.ReadLine();
+        }
+
+        private static void FindFinal(Stack<State> history, State current)
+        {
+            if (current.IsFinalState())
+                currentBest = Math.Min(currentBest, history.Count);
+
+            history.Push(current);
+            var futureStates = current.GetPossibleSuccessorStates();
+            foreach (var futureState in futureStates)
+            {
+                // Explore further if this is really a new State
+                if (!history.Contains(futureState))
+                {
+                    FindFinal(history, futureState);
+                }
+            }
+            history.Pop();
         }
     }
 
@@ -37,7 +56,7 @@ namespace Day_11
 
         public string[] Desc = {"E ", "1G", "1M", "2G", "2M", "3G", "3M", "4G", "4M" };
 
-        public IEnumerable<String> FirstFloor => Items.Where(x => x == 1).Select(x => Desc[x]);
+        public int Depth { get; set; } = 0;
 
         private readonly int[] _chipIndicies;
         private readonly int[] _generatorIndicies;
@@ -139,7 +158,7 @@ namespace Day_11
                 possibleTransitions.AddRange(combinations.SelectMany(pair => GenerateTransitions(possibleMovements, pair)));
             }
 
-            return possibleTransitions.Select(Transform);
+            return possibleTransitions.Select(Transform).Where(state => state.IsValid());
         }
 
         private static IEnumerable<Transition> GenerateTransitions(IEnumerable<int> movements, int ItemIndex)
