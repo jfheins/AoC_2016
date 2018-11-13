@@ -81,7 +81,7 @@ namespace Day_11
                 }
                 result += "\r\n";
             }
-
+            result += IsValid() ? "===  VALID  ===\r\n" : "=== INVALID ===\r\n";
             return result;
         }
 
