@@ -155,6 +155,7 @@ namespace Day_11
         public State Transform(Transition t)
         {
             var newState = Items.ToArray();
+            newState[0] += t.Direction; // Move the elevator
             foreach (var idx in t.ItemIndicies)
             {
                 newState[idx] += t.Direction;
