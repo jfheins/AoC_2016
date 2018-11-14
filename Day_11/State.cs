@@ -59,7 +59,10 @@ namespace Day_11
                 }
                 result += "\r\n";
             }
-            result += IsValid() ? "===  VALID  ===\r\n" : "=== INVALID ===\r\n";
+
+			result += $"Score: {GetScore()} Points\r\n";
+			if (!IsValid())
+				result += "===== INVALID =====\r\n";
             return result;
         }
 
