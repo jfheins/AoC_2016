@@ -98,7 +98,17 @@ namespace Day_11
 			}
 
 			return score;
-		}
+        }
+
+        public int DistanceFromFinalState()
+        {
+            int score = 0;
+            for (int i = 1; i < Items.Length; i++)
+            {
+                score += (4 - Items[i]);
+            }
+            return score;
+        }
 
         public IEnumerable<State> GetPossibleSuccessorStates()
         {
