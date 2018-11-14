@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
+using Medallion.Collections;
 
 namespace Day_11
 {
@@ -11,12 +12,12 @@ namespace Day_11
         static void Main(string[] args)
         {
             var input = "1 2 1 3 1"; // Example
-            input = "1 1 1 2 3 2 3";
-            //input = "1 1 1 2 3 2 3 2 3 2 3";
+            input = "1 1 1 2 3 2 3 2 3";
+            input = "1 1 1 2 3 2 3 2 3 2 3";
             var initialState = State.FromString(input);
             Console.WriteLine(new Path(initialState).Length);
 
-            var paths = new List<Path>
+            var paths = new PriorityQueue<Path>
             {
                 new Path(initialState)
             };
@@ -29,9 +30,8 @@ namespace Day_11
             Path finalPath = null;
 			while (paths.Any())
 			{
-			    var mostPromising = paths[0];
-			    paths.RemoveAt(0);
-			    visitedStates.Add(mostPromising.Current, mostPromising.Length);
+			    var mostPromising = paths.Dequeue();
+			    visitedStates.TryAdd(mostPromising.Current, mostPromising.Length);
 
                 var nextStates = new HashSet<State>(mostPromising.Current.GetPossibleSuccessorStates());
 
@@ -54,15 +54,13 @@ namespace Day_11
                     }
 			        else
 			        {
-                        paths.Add(path);
+                        paths.Enqueue(path);
 			        }
 			    }
-
-                paths.Sort(CompareRemaining);
-
+                
 			    iterCount++;
 
-                if (iterCount % 1000 == 0)
+                if (iterCount % 10000 == 0)
                 {
                     Console.WriteLine($"{paths.Count} possible states after {iterCount++} explore iterations.");
                     Console.WriteLine($"best path has {mostPromising.Current.GetScore()} points and {mostPromising.Current.DistanceFromFinalState()} distance remaining.");
@@ -86,41 +84,4 @@ namespace Day_11
             return x.Cost.CompareTo(y.Cost);
         }
     }
-
-	internal class Path
-	{
-        public Path(State initial)
-		{
-			Previous = null;
-			Current = initial;
-		    Length = 0;
-		    Cost = Current.DistanceFromFinalState() + Length;
-		}
-
-		public Path(Path old, State next)
-		{
-		    Previous = old;
-			Current = next;
-		    Length = old.Length + 1;
-		    Cost = Current.DistanceFromFinalState() + Length;
-        }
-
-	    public IEnumerable<State> GetHistory()
-	    {
-	        var pointer = Previous;
-	        while (pointer != null)
-	        {
-	            yield return pointer.Current;
-	            pointer = pointer.Previous;
-	        }
-	    }
-
-        public int Length { get; }
-
-        public Path Previous { get; }
-		public State Current { get; }
-
-	    public int Cost { get; }
-
-	} 
 }

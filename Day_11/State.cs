@@ -34,7 +34,7 @@ namespace Day_11
             foreach (var idx in nonElevatorIndicies)
             {
                 var factor = 2 - (idx % 2);
-                _weights[idx] = factor;
+                _weights[idx] = 1;
             }
         }
 
