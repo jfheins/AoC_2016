@@ -19,6 +19,7 @@ namespace Day_11
             {
                 new Path(initialState)
             };
+            var visitedStates = new HashSet<State>();
 
             Console.WriteLine("Initial State:");
             Console.WriteLine(initialState);
@@ -29,10 +30,9 @@ namespace Day_11
 			{
 			    var mostPromising = paths[0];
 			    paths.RemoveAt(0);
+			    visitedStates.Add(mostPromising.Current);
 
-			    var history = mostPromising.GetHistory().ToList();
-                var nextStates = mostPromising.Current.GetPossibleSuccessorStates()
-                        .Where(newState => !history.Contains(newState)).ToList();
+                var nextStates = new HashSet<State>(mostPromising.Current.GetPossibleSuccessorStates());
 
 			    if (nextStates.Any(s => s.IsFinalState()))
 			    {
@@ -40,16 +40,20 @@ namespace Day_11
 			        break;
 			    }
 
+                // Filter out states that have been visited before
+                //nextStates.ExceptWith(visitedStates);
+
 			    var nextPaths = nextStates.Select(newState => new Path(mostPromising, newState));
                 paths.AddRange(nextPaths);
                 paths.Sort(CompareRemaining);
 
 			    iterCount++;
 
-                if (iterCount % 1000 == 0)
-			    {
-				    Console.WriteLine($"{paths.Count} possible states after {iterCount++} explore iterations.");
-			    }
+                if (iterCount % 100 == 0)
+                {
+                    Console.WriteLine($"{paths.Count} possible states after {iterCount++} explore iterations.");
+                    Console.WriteLine($"best path has {mostPromising.Current.GetScore()} points and {mostPromising.Current.DistanceFromFinalState()} distance remaining.");
+                }
 			}
 			
 			Console.WriteLine("Final Path:");
@@ -66,22 +70,24 @@ namespace Day_11
 
         private static int CompareRemaining(Path x, Path y)
         {
-            return x.Current.DistanceFromFinalState().CompareTo(y.Current.DistanceFromFinalState());
+            return x.Cost.CompareTo(y.Cost);
         }
     }
 
 	internal class Path
 	{
-		public Path(State initial)
+        public Path(State initial)
 		{
 			Previous = null;
 			Current = initial;
+		    Length = 0;
 		}
 
 		public Path(Path old, State next)
 		{
 		    Previous = old;
 			Current = next;
+		    Length = old.Length + 1;
 		}
 
 	    public IEnumerable<State> GetHistory()
@@ -94,9 +100,12 @@ namespace Day_11
 	        }
 	    }
 
-	    public int Length => GetHistory().Count();
+        public int Length { get; }
 
-		public Path Previous { get; }
+        public Path Previous { get; }
 		public State Current { get; }
+
+	    public int Cost => Current.DistanceFromFinalState() + Length;
+
 	} 
 }

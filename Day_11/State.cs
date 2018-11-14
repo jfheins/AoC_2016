@@ -103,9 +103,11 @@ namespace Day_11
         public int DistanceFromFinalState()
         {
             int score = 0;
+            int chipFactor;
             for (int i = 1; i < Items.Length; i++)
             {
-                score += (4 - Items[i]);
+                chipFactor = 2 - (i % 2);
+                score += (4 - Items[i]) * chipFactor;
             }
             return score;
         }
@@ -181,6 +183,11 @@ namespace Day_11
         public bool Equals(State other)
         {
             return other != null && Items.SequenceEqual(other.Items);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Items);
         }
     }
 }
