@@ -13,7 +13,7 @@ namespace Day_11
         /// </summary>
         public int[] Items { get; private set; }
 
-        public string[] Desc = {"E ", "1G", "1M", "2G", "2M", "3G", "3M", "4G", "4M" };
+        public string[] Desc = {"E ", "1G", "1M", "2G", "2M", "3G", "3M", "4G", "4M", "5G", "5M" };
 
         public int Depth { get; set; } = 0;
 
@@ -61,8 +61,6 @@ namespace Day_11
             }
 
 			result += $"Score: {GetScore()} Points\r\n";
-			if (!IsValid())
-				result += "===== INVALID =====\r\n";
             return result;
         }
 
@@ -70,7 +68,11 @@ namespace Day_11
         {
             // A chip must not be on the same level as a non-matching generator
             foreach (var chip in ChipLevels.Select((lvl, idx) => new { lvl, idx }))
-            {
+			{
+				var isProtected = GeneratorLevels[chip.idx] == chip.lvl;
+				if (isProtected)
+					continue;
+
                 if (GeneratorLevels.Where((l, i) => l == chip.lvl && i != chip.idx).Any())
                     return false;
             }
@@ -88,9 +90,15 @@ namespace Day_11
         }
 
         public int GetScore()
-        {
-            return Items.Skip(1).Sum();
-        }
+		{
+			int score = 0;
+			for (int i = 1; i < Items.Length; i++)
+			{
+				score += Items[i];
+			}
+
+			return score;
+		}
 
         public IEnumerable<State> GetPossibleSuccessorStates()
         {

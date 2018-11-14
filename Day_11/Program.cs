@@ -8,11 +8,10 @@ namespace Day_11
 {
     class Program
     {
-        private static int currentBest = 1000000;
-
         static void Main(string[] args)
         {
             var input = "1 2 1 3 1"; // Example
+			input = "1 1 1 2 3 2 3 2 3 2 3";
             var initialState = State.FromString(input);
 
 			var paths = new List<Path>
@@ -23,30 +22,32 @@ namespace Day_11
 			Console.WriteLine("Initial State:");
             Console.WriteLine(initialState);
 
-			for (int i = 1; i < 11; i++)
+			int stepcounter = 0;
+			while (!paths.Any(p => p.Current.IsFinalState()))
 			{
-
-				paths = paths.SelectMany(p =>
+				paths = paths.AsParallel().SelectMany(p =>
 					p.Current.GetPossibleSuccessorStates()
 						.Where(newState => !p.Previous.Contains(newState))
 						.Select(newState => new Path(p, newState))).ToList();
 
-				Console.WriteLine($"{paths.Count} possible states after {i} steps:");
-				foreach (var path in paths)
-				{
-					Console.WriteLine(path.Current);
-				}
-				Console.WriteLine("=====================================");
+				Console.WriteLine($"{paths.Count} possible states after {stepcounter++} steps.");
 			}
+			
+			Console.WriteLine("Final Path:");
+			var finalPath = paths.First(p => p.Current.IsFinalState());
+			foreach (var state in finalPath.Previous)
+			{
+				//Console.WriteLine(state);
+			}
+			Console.WriteLine(finalPath.Current);
 
-            Console.ReadLine();
+			Console.WriteLine($"Final state reached after {stepcounter} steps :-)");
+
+			Console.ReadLine();
         }
 
         private static void FindFinal(Stack<State> history, State current)
         {
-            if (current.IsFinalState())
-                currentBest = Math.Min(currentBest, history.Count);
-
             history.Push(current);
             var futureStates = current.GetPossibleSuccessorStates();
             foreach (var futureState in futureStates)
