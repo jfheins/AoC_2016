@@ -11,7 +11,8 @@ namespace Day_11
         static void Main(string[] args)
         {
             var input = "1 2 1 3 1"; // Example
-			input = "1 1 1 2 3 2 3 2 3 2 3";
+            input = "1 1 1 2 3 2 3";
+            //input = "1 1 1 2 3 2 3 2 3 2 3";
             var initialState = State.FromString(input);
             Console.WriteLine(new Path(initialState).Length);
 
@@ -19,7 +20,7 @@ namespace Day_11
             {
                 new Path(initialState)
             };
-            var visitedStates = new HashSet<State>();
+            var visitedStates = new Dictionary<State, int>();
 
             Console.WriteLine("Initial State:");
             Console.WriteLine(initialState);
@@ -30,7 +31,7 @@ namespace Day_11
 			{
 			    var mostPromising = paths[0];
 			    paths.RemoveAt(0);
-			    visitedStates.Add(mostPromising.Current);
+			    visitedStates.Add(mostPromising.Current, mostPromising.Length);
 
                 var nextStates = new HashSet<State>(mostPromising.Current.GetPossibleSuccessorStates());
 
@@ -40,16 +41,28 @@ namespace Day_11
 			        break;
 			    }
 
-                // Filter out states that have been visited before
-                //nextStates.ExceptWith(visitedStates);
-
 			    var nextPaths = nextStates.Select(newState => new Path(mostPromising, newState));
-                paths.AddRange(nextPaths);
+
+			    foreach (var path in nextPaths)
+			    {
+			        if (visitedStates.TryGetValue(path.Current, out var existingLength))
+			        {
+			            if (path.Length < existingLength)
+			            {
+			                visitedStates[path.Current] = path.Length;
+			            }
+                    }
+			        else
+			        {
+                        paths.Add(path);
+			        }
+			    }
+
                 paths.Sort(CompareRemaining);
 
 			    iterCount++;
 
-                if (iterCount % 100 == 0)
+                if (iterCount % 1000 == 0)
                 {
                     Console.WriteLine($"{paths.Count} possible states after {iterCount++} explore iterations.");
                     Console.WriteLine($"best path has {mostPromising.Current.GetScore()} points and {mostPromising.Current.DistanceFromFinalState()} distance remaining.");
@@ -63,7 +76,7 @@ namespace Day_11
 			}
 			Console.WriteLine(finalPath.Current);
 
-			Console.WriteLine($"Final state reached after {iterCount} steps :-)");
+			Console.WriteLine($"Final state reached after {finalPath.Length} steps :-)");
 
 			Console.ReadLine();
         }
@@ -81,6 +94,7 @@ namespace Day_11
 			Previous = null;
 			Current = initial;
 		    Length = 0;
+		    Cost = Current.DistanceFromFinalState() + Length;
 		}
 
 		public Path(Path old, State next)
@@ -88,7 +102,8 @@ namespace Day_11
 		    Previous = old;
 			Current = next;
 		    Length = old.Length + 1;
-		}
+		    Cost = Current.DistanceFromFinalState() + Length;
+        }
 
 	    public IEnumerable<State> GetHistory()
 	    {
@@ -105,7 +120,7 @@ namespace Day_11
         public Path Previous { get; }
 		public State Current { get; }
 
-	    public int Cost => Current.DistanceFromFinalState() + Length;
+	    public int Cost { get; }
 
 	} 
 }

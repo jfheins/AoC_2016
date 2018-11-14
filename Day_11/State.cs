@@ -19,6 +19,7 @@ namespace Day_11
 
         private readonly int[] _chipIndicies;
         private readonly int[] _generatorIndicies;
+        private readonly int[] _weights;
 
         private int[] ChipLevels => _chipIndicies.Select(idx => Items[idx]).ToArray();
         private int[] GeneratorLevels => _generatorIndicies.Select(idx => Items[idx]).ToArray();
@@ -29,6 +30,12 @@ namespace Day_11
             var nonElevatorIndicies = Enumerable.Range(1, Items.Length - 1).ToArray();
             _chipIndicies = nonElevatorIndicies.Where(x => x % 2 == 0).ToArray();
             _generatorIndicies = nonElevatorIndicies.Where(x => x % 2 == 1).ToArray();
+            _weights = new int[Items.Length];
+            foreach (var idx in nonElevatorIndicies)
+            {
+                var factor = 2 - (idx % 2);
+                _weights[idx] = factor;
+            }
         }
 
         /// <summary>
@@ -96,18 +103,15 @@ namespace Day_11
 			{
 				score += Items[i];
 			}
-
 			return score;
         }
 
         public int DistanceFromFinalState()
         {
             int score = 0;
-            int chipFactor;
             for (int i = 1; i < Items.Length; i++)
             {
-                chipFactor = 2 - (i % 2);
-                score += (4 - Items[i]) * chipFactor;
+                score += (4 - Items[i]) * _weights[i];
             }
             return score;
         }
