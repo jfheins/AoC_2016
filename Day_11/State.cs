@@ -8,7 +8,7 @@ namespace Day_11
     internal class State : IEquatable<State>
     {
         private static readonly string[] Desc =
-            {"E ", "1G", "1M", "2G", "2M", "3G", "3M", "4G", "4M", "5G", "5M", "6G", "6M", "7G", "7M"};
+            {"E ", "1G", "1M", "2G", "2M", "3G", "3M", "4G", "4M", "5G", "5M", "6G", "6M", "7G", "7M", "8G", "8M"};
 
         private static int[] _chipIndicies;
         private static int[] _generatorIndicies;
@@ -38,11 +38,6 @@ namespace Day_11
 
         public int[] ChipLevels => _chipIndicies.Select(idx => Items[idx]).ToArray();
         public int[] GeneratorLevels => _generatorIndicies.Select(idx => Items[idx]).ToArray();
-
-        public bool Equals(State other)
-        {
-            return other != null && Items.SequenceEqual(other.Items);
-        }
 
         /// <summary>
         ///     Expects a string like "1 2 1 3 1"
@@ -171,6 +166,11 @@ namespace Day_11
         public override bool Equals(object obj)
         {
             return Equals(obj as State);
+        }
+
+        public bool Equals(State other)
+        {
+            return other != null && Items.SequenceEqual(other.Items);
         }
 
         public override int GetHashCode()

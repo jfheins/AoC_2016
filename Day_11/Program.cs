@@ -34,6 +34,8 @@ namespace Day_11
                 stepCounter++;
                 Console.Write($"Step {stepCounter}, expanding {nextStates.Count} nodes ... ");
 
+                visitedStates.UnionWith(nextStates);
+
                 var expanded = nextStates.AsParallel().SelectMany(s => s.GetPossibleSuccessorStates());
                 nextStates = new HashSet<State>(expanded, comparer);
                 nextStates.ExceptWith(visitedStates);
@@ -42,8 +44,6 @@ namespace Day_11
 
                 if (nextStates.AsParallel().Any(s => s.IsFinalState()))
                     break;
-
-                visitedStates.UnionWith(nextStates);
             }
 
             sw.Stop();
