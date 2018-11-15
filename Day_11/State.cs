@@ -6,36 +6,27 @@ using System.Linq;
 namespace Day_11
 {
     internal class State : IEquatable<State>
-    {
-        /// <summary>
-        /// By convention, the first item (index 0) is the elevator, every odd item is a generator and every even >0 a chip.
-        /// The length of the array corresponds to the number of items, their value to the floor they're on.
-        /// </summary>
-        public int[] Items { get; private set; }
+	{
+		/// <summary>
+		/// By convention, the first item (index 0) is the elevator, every odd item is a generator and every even >0 a chip.
+		/// The length of the array corresponds to the number of items, their value to the floor they're on.
+		/// </summary>
+		private readonly int[] _items;
 
-        public string[] Desc = {"E ", "1G", "1M", "2G", "2M", "3G", "3M", "4G", "4M", "5G", "5M" };
-
-        public int Depth { get; set; } = 0;
-
+		private static readonly string[] Desc = {"E ", "1G", "1M", "2G", "2M", "3G", "3M", "4G", "4M", "5G", "5M" };
+		
         private readonly int[] _chipIndicies;
         private readonly int[] _generatorIndicies;
-        private readonly int[] _weights;
 
-        private int[] ChipLevels => _chipIndicies.Select(idx => Items[idx]).ToArray();
-        private int[] GeneratorLevels => _generatorIndicies.Select(idx => Items[idx]).ToArray();
+        private int[] ChipLevels => _chipIndicies.Select(idx => _items[idx]).ToArray();
+        private int[] GeneratorLevels => _generatorIndicies.Select(idx => _items[idx]).ToArray();
 
         public State(IEnumerable<int> items)
         {
-            Items = items.ToArray();
-            var nonElevatorIndicies = Enumerable.Range(1, Items.Length - 1).ToArray();
+            _items = items.ToArray();
+            var nonElevatorIndicies = Enumerable.Range(1, _items.Length - 1).ToArray();
             _chipIndicies = nonElevatorIndicies.Where(x => x % 2 == 0).ToArray();
             _generatorIndicies = nonElevatorIndicies.Where(x => x % 2 == 1).ToArray();
-            _weights = new int[Items.Length];
-            foreach (var idx in nonElevatorIndicies)
-            {
-                var factor = 2 - (idx % 2);
-                _weights[idx] = 1;
-            }
         }
 
         /// <summary>
@@ -60,9 +51,9 @@ namespace Day_11
             for (int floor = 4; floor > 0; floor--)
             {
                 result += $"F{floor} ";
-                for (int i = 0; i < Items.Length; i++)
+                for (int i = 0; i < _items.Length; i++)
                 {
-                    result += ((Items[i] == floor) ? Desc[i] : ". ")+" ";
+                    result += ((_items[i] == floor) ? Desc[i] : ". ")+" ";
                 }
                 result += "\r\n";
             }
@@ -84,8 +75,8 @@ namespace Day_11
                     return false;
             }
             // The elevator cannot run empty, so something must be on its level
-            var elevatorLevel = Items[0];
-            if (Items.Count(x => x == elevatorLevel) <= 1)
+            var elevatorLevel = _items[0];
+            if (_items.Count(x => x == elevatorLevel) <= 1)
                 return false;
 
             return true;
@@ -93,34 +84,24 @@ namespace Day_11
 
         public bool IsFinalState()
         {
-            return Items.All(x => x == 4);
+            return _items.All(x => x == 4);
         }
 
         public int GetScore()
 		{
 			int score = 0;
-			for (int i = 1; i < Items.Length; i++)
+			for (int i = 1; i < _items.Length; i++)
 			{
-				score += Items[i];
+				score += _items[i];
 			}
 			return score;
-        }
-
-        public int DistanceFromFinalState()
-        {
-            int score = 0;
-            for (int i = 1; i < Items.Length; i++)
-            {
-                score += (4 - Items[i]) * _weights[i];
-            }
-            return score;
         }
 
         public IEnumerable<State> GetPossibleSuccessorStates()
         {
             // The elevator can move up or down, and it can take 1 or 2 items with it.
             var possibleMovements = new List<int>();
-            var elevatorLevel = Items[0];
+            var elevatorLevel = _items[0];
 
             if (elevatorLevel < 4)
                 possibleMovements.Add(1);
@@ -130,7 +111,7 @@ namespace Day_11
             // THe List of the indicies of all possible subsets of items
             var possibleTransitions = new List<Transition>();
 
-            var movableItemIndicies = Items
+            var movableItemIndicies = _items
                 .IndexWhere(l => l == elevatorLevel)
                 .Where(x => x > 0) // Not interested in the elevator
                 .ToArray();
@@ -159,7 +140,7 @@ namespace Day_11
 
         public State Transform(Transition t)
         {
-            var newState = Items.ToArray();
+            var newState = _items.ToArray();
             newState[0] += t.Direction; // Move the elevator
             foreach (var idx in t.ItemIndicies)
             {
@@ -186,12 +167,12 @@ namespace Day_11
 
         public bool Equals(State other)
         {
-            return other != null && Items.SequenceEqual(other.Items);
+            return other != null && _items.SequenceEqual(other._items);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Items);
+            return HashCode.Combine(_items);
         }
     }
 }

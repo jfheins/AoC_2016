@@ -10,7 +10,7 @@ namespace Day_11
             Previous = null;
             Current = initial;
             Length = 0;
-            Cost = Current.DistanceFromFinalState() + Length;
+            Cost = Length;
         }
 
         public Path(Path old, State next)
@@ -18,7 +18,7 @@ namespace Day_11
             Previous = old;
             Current = next;
             Length = old.Length + 1;
-            Cost = Current.DistanceFromFinalState() + Length;
+            Cost = Length;
         }
 
         public IEnumerable<State> GetHistory()
