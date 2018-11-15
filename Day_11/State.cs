@@ -15,19 +15,27 @@ namespace Day_11
 
 		private static readonly string[] Desc = {"E ", "1G", "1M", "2G", "2M", "3G", "3M", "4G", "4M", "5G", "5M" };
 		
-        private readonly int[] _chipIndicies;
-        private readonly int[] _generatorIndicies;
+        private static int[] _chipIndicies;
+        private static int[] _generatorIndicies;
 
         private int[] ChipLevels => _chipIndicies.Select(idx => _items[idx]).ToArray();
         private int[] GeneratorLevels => _generatorIndicies.Select(idx => _items[idx]).ToArray();
 
-        public State(IEnumerable<int> items)
+        private State(IEnumerable<int> items)
         {
             _items = items.ToArray();
-            var nonElevatorIndicies = Enumerable.Range(1, _items.Length - 1).ToArray();
-            _chipIndicies = nonElevatorIndicies.Where(x => x % 2 == 0).ToArray();
-            _generatorIndicies = nonElevatorIndicies.Where(x => x % 2 == 1).ToArray();
+            if (_chipIndicies == null)
+            {
+                var nonElevatorIndicies = Enumerable.Range(1, _items.Length - 1).ToArray();
+                _chipIndicies = nonElevatorIndicies.Where(x => x % 2 == 0).ToArray();
+                _generatorIndicies = nonElevatorIndicies.Where(x => x % 2 == 1).ToArray();
+            }
         }
+
+	    private State(int[] items)
+	    {
+	        _items = items;
+	    }
 
         /// <summary>
         /// Expects a string like "1 2 1 3 1"
