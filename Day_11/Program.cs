@@ -36,6 +36,7 @@ namespace Day_11
 
                 var expanded = nextStates.AsParallel().SelectMany(s => s.GetPossibleSuccessorStates());
                 nextStates = new HashSet<State>(expanded, comparer);
+                nextStates.ExceptWith(visitedStates);
 
                 Console.WriteLine($"into {nextStates.Count} unique new nodes.");
 
