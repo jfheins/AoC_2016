@@ -19,11 +19,12 @@ namespace Day_11
         private static int[] _generatorIndicies;
 
         public int[] ChipLevels => _chipIndicies.Select(idx => Items[idx]).ToArray();
-        public int[] GeneratorLevels => _generatorIndicies.Select(idx => Items[idx]).ToArray();
+	    public int[] GeneratorLevels => _generatorIndicies.Select(idx => Items[idx]).ToArray();
 
-        private State(IEnumerable<int> items)
+	    private State(IEnumerable<int> items)
         {
             Items = items.ToArray();
+
             if (_chipIndicies == null)
             {
                 var nonElevatorIndicies = Enumerable.Range(1, Items.Length - 1).ToArray();
@@ -72,14 +73,15 @@ namespace Day_11
 
         public bool IsValid()
         {
+            var generators = GeneratorLevels;
             // A chip must not be on the same level as a non-matching generator
             foreach (var chip in ChipLevels.Select((lvl, idx) => new { lvl, idx }))
 			{
-				var isProtected = GeneratorLevels[chip.idx] == chip.lvl;
+				var isProtected = generators[chip.idx] == chip.lvl;
 				if (isProtected)
 					continue;
 
-                if (GeneratorLevels.Where((l, i) => l == chip.lvl && i != chip.idx).Any())
+                if (generators.Where((l, i) => l == chip.lvl && i != chip.idx).Any())
                     return false;
             }
             // The elevator cannot run empty, so something must be on its level
