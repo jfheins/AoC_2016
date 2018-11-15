@@ -3,46 +3,35 @@ using System.Collections.Generic;
 
 namespace Day_11
 {
-    internal class Path :IComparable<Path>
+    internal class Path
     {
         public Path(State initial)
         {
-            Previous = null;
+            Predecessor = null;
             Current = initial;
             Length = 0;
-            Cost = Length;
         }
 
         public Path(Path old, State next)
         {
-            Previous = old;
+            Predecessor = old;
             Current = next;
             Length = old.Length + 1;
-            Cost = Length;
         }
 
         public IEnumerable<State> GetHistory()
         {
-            var pointer = Previous;
+            var pointer = Predecessor;
             while (pointer != null)
             {
                 yield return pointer.Current;
-                pointer = pointer.Previous;
+                pointer = pointer.Predecessor;
             }
         }
 
         public int Length { get; }
 
-        public Path Previous { get; }
+        public Path Predecessor { get; }
         public State Current { get; }
-
-        public int Cost { get; }
-
-        public int CompareTo(Path other)
-        {
-            if (ReferenceEquals(this, other)) return 0;
-            if (ReferenceEquals(null, other)) return 1;
-            return Cost.CompareTo(other.Cost);
-        }
     }
 }
