@@ -13,8 +13,10 @@ namespace Day_11
         static void Main(string[] args)
         {
             var input = "1 2 1 3 1"; // Example
-            input = "1 1 1 2 3 2 3 2 3";
-            input = "1 1 1 2 3 2 3 2 3 2 3";
+                input = "1 1 1 2 3 2 3";
+                input = "1 1 1 2 3 2 3 2 3";
+                input = "1 1 1 2 3 2 3 2 3 2 3";
+                input = "1 1 1 2 3 2 3 2 3 2 3 1 1 1 1";
             var initialState = State.FromString(input);
 
             var sw = new Stopwatch();

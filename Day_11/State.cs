@@ -13,7 +13,7 @@ namespace Day_11
 		/// </summary>
 		public readonly int[] Items;
 
-		private static readonly string[] Desc = {"E ", "1G", "1M", "2G", "2M", "3G", "3M", "4G", "4M", "5G", "5M" };
+		private static readonly string[] Desc = {"E ", "1G", "1M", "2G", "2M", "3G", "3M", "4G", "4M", "5G", "5M", "6G", "6M", "7G", "7M" };
 		
         private static int[] _chipIndicies;
         private static int[] _generatorIndicies;
