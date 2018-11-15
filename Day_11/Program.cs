@@ -2,21 +2,18 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Security.Cryptography.X509Certificates;
-using Medallion.Collections;
 
 namespace Day_11
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var input = "1 2 1 3 1"; // Example
-                input = "1 1 1 2 3 2 3";
-                input = "1 1 1 2 3 2 3 2 3";
-                input = "1 1 1 2 3 2 3 2 3 2 3";
-                input = "1 1 1 2 3 2 3 2 3 2 3 1 1 1 1";
+            input = "1 1 1 2 3 2 3";
+            input = "1 1 1 2 3 2 3 2 3";
+            input = "1 1 1 2 3 2 3 2 3 2 3";
+            input = "1 1 1 2 3 2 3 2 3 2 3 1 1 1 1";
             var initialState = State.FromString(input);
 
             var sw = new Stopwatch();
@@ -29,7 +26,7 @@ namespace Day_11
             var comparer = new StateEquivalent();
 
             var visitedStates = new HashSet<State>(comparer);
-            var nextStates = new HashSet<State>(comparer) { initialState };
+            var nextStates = new HashSet<State>(comparer) {initialState};
 
             var stepCounter = 0;
             while (nextStates.Any())
@@ -44,15 +41,15 @@ namespace Day_11
 
                 if (nextStates.AsParallel().Any(s => s.IsFinalState()))
                     break;
-                
-                visitedStates.UnionWith(nextStates);
 
+                visitedStates.UnionWith(nextStates);
             }
+
             sw.Stop();
             var duration = sw.ElapsedMilliseconds / 1000f;
 
             Console.WriteLine("========================================");
-			Console.WriteLine($"Final state reached after {stepCounter} steps :-)");
+            Console.WriteLine($"Final state reached after {stepCounter} steps :-)");
             Console.WriteLine($"It took {duration:0.000} seconds.");
             Console.ReadLine();
         }
@@ -78,7 +75,7 @@ namespace Day_11
 
     internal class StateEquivalent : EqualityComparer<State>
     {
-        private static readonly int[,] Primes = { {2, 3, 5, 7}, {11, 13, 17, 19 }, {23, 29, 31, 37}, {41, 43, 47, 53} };
+        private static readonly int[,] Primes = {{2, 3, 5, 7}, {11, 13, 17, 19}, {23, 29, 31, 37}, {41, 43, 47, 53}};
 
         public override bool Equals(State a, State b)
         {
@@ -98,10 +95,8 @@ namespace Day_11
             long result = 1;
             var chips = x.ChipLevels;
             var generators = x.GeneratorLevels;
-            for (int i = 0; i < chips.Length; i++)
-            {
-                result *= Primes[chips[i]-1, generators[i]-1];
-            }
+            for (var i = 0; i < chips.Length; i++)
+                result *= Primes[chips[i] - 1, generators[i] - 1];
 
             return result;
         }
@@ -109,7 +104,7 @@ namespace Day_11
         public override int GetHashCode(State x)
         {
             var hash = GetLong(x);
-            return (int)(hash ^ (hash >> 32));
+            return (int) (hash ^ (hash >> 32));
         }
     }
 }
