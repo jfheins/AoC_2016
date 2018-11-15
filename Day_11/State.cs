@@ -11,22 +11,22 @@ namespace Day_11
 		/// By convention, the first item (index 0) is the elevator, every odd item is a generator and every even >0 a chip.
 		/// The length of the array corresponds to the number of items, their value to the floor they're on.
 		/// </summary>
-		private readonly int[] _items;
+		public readonly int[] Items;
 
 		private static readonly string[] Desc = {"E ", "1G", "1M", "2G", "2M", "3G", "3M", "4G", "4M", "5G", "5M" };
 		
         private static int[] _chipIndicies;
         private static int[] _generatorIndicies;
 
-        private int[] ChipLevels => _chipIndicies.Select(idx => _items[idx]).ToArray();
-        private int[] GeneratorLevels => _generatorIndicies.Select(idx => _items[idx]).ToArray();
+        public int[] ChipLevels => _chipIndicies.Select(idx => Items[idx]).ToArray();
+        public int[] GeneratorLevels => _generatorIndicies.Select(idx => Items[idx]).ToArray();
 
         private State(IEnumerable<int> items)
         {
-            _items = items.ToArray();
+            Items = items.ToArray();
             if (_chipIndicies == null)
             {
-                var nonElevatorIndicies = Enumerable.Range(1, _items.Length - 1).ToArray();
+                var nonElevatorIndicies = Enumerable.Range(1, Items.Length - 1).ToArray();
                 _chipIndicies = nonElevatorIndicies.Where(x => x % 2 == 0).ToArray();
                 _generatorIndicies = nonElevatorIndicies.Where(x => x % 2 == 1).ToArray();
             }
@@ -34,7 +34,7 @@ namespace Day_11
 
 	    private State(int[] items)
 	    {
-	        _items = items;
+	        Items = items;
 	    }
 
         /// <summary>
@@ -59,9 +59,9 @@ namespace Day_11
             for (int floor = 4; floor > 0; floor--)
             {
                 result += $"F{floor} ";
-                for (int i = 0; i < _items.Length; i++)
+                for (int i = 0; i < Items.Length; i++)
                 {
-                    result += ((_items[i] == floor) ? Desc[i] : ". ")+" ";
+                    result += ((Items[i] == floor) ? Desc[i] : ". ")+" ";
                 }
                 result += "\r\n";
             }
@@ -83,8 +83,8 @@ namespace Day_11
                     return false;
             }
             // The elevator cannot run empty, so something must be on its level
-            var elevatorLevel = _items[0];
-            if (_items.Count(x => x == elevatorLevel) <= 1)
+            var elevatorLevel = Items[0];
+            if (Items.Count(x => x == elevatorLevel) <= 1)
                 return false;
 
             return true;
@@ -92,15 +92,15 @@ namespace Day_11
 
         public bool IsFinalState()
         {
-            return _items.All(x => x == 4);
+            return Items.All(x => x == 4);
         }
 
         public int GetScore()
 		{
 			int score = 0;
-			for (int i = 1; i < _items.Length; i++)
+			for (int i = 1; i < Items.Length; i++)
 			{
-				score += _items[i];
+				score += Items[i];
 			}
 			return score;
         }
@@ -109,7 +109,7 @@ namespace Day_11
         {
             // The elevator can move up or down, and it can take 1 or 2 items with it.
             var possibleMovements = new List<int>();
-            var elevatorLevel = _items[0];
+            var elevatorLevel = Items[0];
 
             if (elevatorLevel < 4)
                 possibleMovements.Add(1);
@@ -119,7 +119,7 @@ namespace Day_11
             // THe List of the indicies of all possible subsets of items
             var possibleTransitions = new List<Transition>();
 
-            var movableItemIndicies = _items
+            var movableItemIndicies = Items
                 .IndexWhere(l => l == elevatorLevel)
                 .Where(x => x > 0) // Not interested in the elevator
                 .ToArray();
@@ -148,7 +148,7 @@ namespace Day_11
 
         public State Transform(Transition t)
         {
-            var newState = _items.ToArray();
+            var newState = Items.ToArray();
             newState[0] += t.Direction; // Move the elevator
             foreach (var idx in t.ItemIndicies)
             {
@@ -175,12 +175,12 @@ namespace Day_11
 
         public bool Equals(State other)
         {
-            return other != null && _items.SequenceEqual(other._items);
+            return other != null && Items.SequenceEqual(other.Items);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(_items);
+            return HashCode.Combine(Items);
         }
     }
 }

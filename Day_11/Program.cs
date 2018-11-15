@@ -24,9 +24,10 @@ namespace Day_11
 
             sw.Start();
 
+            var comparer = new StateIdentical();
 
-            var visitedStates = new HashSet<State>();
-            var nextStates = new HashSet<State>() { initialState };
+            var visitedStates = new HashSet<State>(comparer);
+            var nextStates = new HashSet<State>(comparer) { initialState };
 
             var stepCounter = 0;
             while (nextStates.Any())
@@ -35,7 +36,7 @@ namespace Day_11
                 Console.Write($"Step {stepCounter}, expanding {nextStates.Count} nodes ... ");
 
                 var expanded = nextStates.AsParallel().SelectMany(s => s.GetPossibleSuccessorStates());
-                nextStates = new HashSet<State>(expanded);
+                nextStates = new HashSet<State>(expanded, comparer);
 
                 Console.WriteLine($"into {nextStates.Count} unique new nodes.");
 
@@ -52,6 +53,24 @@ namespace Day_11
 			Console.WriteLine($"Final state reached after {stepCounter} steps :-)");
             Console.WriteLine($"It took {duration:0.000} seconds.");
             Console.ReadLine();
+        }
+    }
+
+    internal class StateIdentical : EqualityComparer<State>
+    {
+        public override bool Equals(State a, State b)
+        {
+            if (a == null && b == null)
+                return true;
+            if (a == null || b == null)
+                return false;
+
+            return a.Items.SequenceEqual(b.Items);
+        }
+
+        public override int GetHashCode(State x)
+        {
+            return HashCode.Combine(x.Items);
         }
     }
 }
