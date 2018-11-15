@@ -24,7 +24,7 @@ namespace Day_11
 
             sw.Start();
 
-            var comparer = new StateIdentical();
+            var comparer = new StateEquivalent();
 
             var visitedStates = new HashSet<State>(comparer);
             var nextStates = new HashSet<State>(comparer) { initialState };
@@ -71,6 +71,43 @@ namespace Day_11
         public override int GetHashCode(State x)
         {
             return HashCode.Combine(x.Items);
+        }
+    }
+
+    internal class StateEquivalent : EqualityComparer<State>
+    {
+        private static readonly int[,] Primes = { {2, 3, 5, 7}, {11, 13, 17, 19 }, {23, 29, 31, 37}, {41, 43, 47, 53} };
+
+        public override bool Equals(State a, State b)
+        {
+            if (a == null && b == null)
+                return true;
+            if (a == null || b == null)
+                return false;
+
+            if (a.Items[0] != b.Items[0])
+                return false;
+
+            return GetLong(a) == GetLong(b);
+        }
+
+        private long GetLong(State x)
+        {
+            long result = 1;
+            var chips = x.ChipLevels;
+            var generators = x.GeneratorLevels;
+            for (int i = 0; i < chips.Length; i++)
+            {
+                result *= Primes[chips[i]-1, generators[i]-1];
+            }
+
+            return result;
+        }
+
+        public override int GetHashCode(State x)
+        {
+            var hash = GetLong(x);
+            return (int)(hash ^ (hash >> 32));
         }
     }
 }
