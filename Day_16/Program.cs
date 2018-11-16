@@ -6,13 +6,12 @@ namespace Day_16
     {
         static void Main(string[] args)
         {
-            var seed = "11111";
+            var seed = "10011111011011001";
+            var diskLength = 272;
 
-            Console.WriteLine(StringEnlarger.Enlarge(seed));
-
-            var content = "110010110100";
-            var checksum = StringEnlarger.CalculateChecksum(content);
-            Console.WriteLine($"Checksum for {content} is {checksum}.");
+            var diskContent = StringEnlarger.EnlargeToLength(seed, diskLength);
+            var checksum = StringEnlarger.CalculateChecksum(diskContent);
+            Console.WriteLine($"Checksum for seed {seed} expanded to {diskLength} is {checksum}.");
 
             Console.ReadLine();
         }
