@@ -77,7 +77,7 @@ namespace Day_16
                 var levelPow = ~blockNumber & (blockNumber + 1);
 				var offset = levelPow - 1;
 				var step = levelPow * 4;
-				return (position - offset) % step == 0 ? '0' : '1';
+				return (blockNumber - offset) % step == 0 ? '1' : '0';
             }
             else
             {
