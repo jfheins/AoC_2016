@@ -23,41 +23,7 @@ namespace Day_16
             return result.Substring(0, length);
         }
 
-        private static string b;
 
-        public static char CharAtPosition(string seed, int contentLength, int position)
-        {
-            if (position >= contentLength)
-            {
-                throw new ArgumentException("Position too large");
-            }
-            if (contentLength <= seed.Length)
-            {
-                // No expansion has taken place
-                return seed[position];
-            }
-
-            var blockNumber = Math.DivRem(position, seed.Length + 1, out var posInBlock);
-
-            if (posInBlock == seed.Length)
-            {
-                // Dragon bit
-                return '_';
-            }
-            else
-            {
-                if (blockNumber % 2 == 0)
-                {
-                    // 'a' block
-                    return seed[posInBlock];
-                }
-                else
-                {
-                    b = b ?? string.Concat(seed.Reverse().Select(c => (char) ('a' - c)));
-                    return b[posInBlock];
-                }
-            }
-        }
 
         public static string CalculateChecksum(IEnumerable<char> content)
         {
@@ -71,6 +37,59 @@ namespace Day_16
         private static char ChecksumBitFromPair(Tuple<char, char> pair)
         {
             return pair.Item1 == pair.Item2 ? '1' : '0';
+        }
+    }
+
+    public class CharProvider
+    {
+        private static string _b;
+        public int ContentLength { get; }
+        public string Seed { get; }
+
+        public CharProvider(string seed, int contentLength)
+        {
+            Seed = seed;
+            ContentLength = contentLength;
+            _b = string.Concat(seed.Reverse().Select(c => (char) ('a' - c)));
+        }
+
+        public char CharAt(int position)
+        {
+            if (position >= ContentLength)
+            {
+                throw new ArgumentException("Position too large");
+            }
+            if (ContentLength <= Seed.Length)
+            {
+                // No expansion has taken place
+                return Seed[position];
+            }
+
+            var blockNumber = Math.DivRem(position, Seed.Length + 1, out var posInBlock);
+
+            if (posInBlock == Seed.Length)
+            {
+                if (blockNumber % 2 == 0)
+                {
+                    return (blockNumber % 4 == 0) ? '0' : '1';
+                }
+                // Dragon bit
+                //return '_';
+                var leastSignificantOneBit = blockNumber & (~blockNumber + 1);
+                return '_';
+            }
+            else
+            {
+                if (blockNumber % 2 == 0)
+                {
+                    // 'a' block
+                    return Seed[posInBlock];
+                }
+                else
+                {
+                    return _b[posInBlock];
+                }
+            }
         }
     }
 }

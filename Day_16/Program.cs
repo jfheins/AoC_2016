@@ -24,7 +24,8 @@ namespace Day_16
             Console.WriteLine($"Calculation took {sw.ElapsedMilliseconds}ms.");
 
             sw.Restart();
-            var expContent = Enumerable.Range(0, diskLength).Select(x => StringEnlarger.CharAtPosition(seed, diskLength, x));
+            var provider = new CharProvider(seed, diskLength);
+            var expContent = Enumerable.Range(0, diskLength).Select(x => provider.CharAt(x));
             checksum = StringEnlarger.CalculateChecksum(expContent);
 
             Console.WriteLine(string.Concat(expContent));
