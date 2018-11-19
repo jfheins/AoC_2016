@@ -74,9 +74,10 @@ namespace Day_16
                     return (blockNumber % 4 == 0) ? '0' : '1';
                 }
                 // Dragon bit
-                //return '_';
-                var leastSignificantOneBit = blockNumber & (~blockNumber + 1);
-                return '_';
+                var levelPow = ~blockNumber & (blockNumber + 1);
+				var offset = levelPow - 1;
+				var step = levelPow * 4;
+				return (position - offset) % step == 0 ? '0' : '1';
             }
             else
             {
@@ -91,5 +92,5 @@ namespace Day_16
                 }
             }
         }
-    }
+	}
 }
