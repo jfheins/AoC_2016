@@ -13,30 +13,24 @@ namespace Day_16
             diskLength = 35651584;
 
             var sw = new Stopwatch();
-            sw.Start();
-            var diskContent = StringEnlarger.EnlargeToLength(seed, diskLength);
-            var checksum = StringEnlarger.CalculateChecksum(diskContent);
-            sw.Stop();
+            //sw.Start();
+            //var diskContent = StringEnlarger.EnlargeToLength(seed, diskLength);
+            //var checksum = StringEnlarger.CalculateChecksum(diskContent);
+            //sw.Stop();
 
             //Console.WriteLine($"Disk content for seed {seed} expanded to {diskLength} is:");
             //Console.WriteLine(diskContent);
-            Console.WriteLine($"Checksum for seed {seed} expanded to {diskLength} is {checksum}.");
-            Console.WriteLine($"Calculation took {sw.ElapsedMilliseconds}ms.");
+            //Console.WriteLine($"Checksum for seed {seed} expanded to {diskLength} is {checksum}.");
+            //Console.WriteLine($"Calculation took {sw.ElapsedMilliseconds}ms.");
 
             sw.Restart();
             var provider = new CharProvider(seed, diskLength);
             var expContent = string.Concat(Enumerable.Range(0, diskLength).Select(x => provider.CharAt(x)));
-            checksum = StringEnlarger.CalculateChecksum(expContent, diskLength);
+            var checksum = StringEnlarger.CalculateChecksum(expContent, diskLength);
 			sw.Stop();
 
 			Console.WriteLine($"Checksum for seed {seed} expanded to {diskLength} is {checksum}.");
             Console.WriteLine($"Calculation took {sw.ElapsedMilliseconds}ms.");
-
-			if ( string.Equals(expContent, diskContent))
-			{
-				Console.WriteLine("Content ist gleich :-)");
-			}
-
             Console.ReadLine();
         }
     }

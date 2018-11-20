@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Day_16
@@ -52,7 +53,7 @@ namespace Day_16
 
     public class CharProvider
     {
-        private static string _b;
+        private static string[] _ab;
         public int ContentLength { get; }
         public string Seed { get; }
 
@@ -60,15 +61,15 @@ namespace Day_16
         {
             Seed = seed;
             ContentLength = contentLength;
-            _b = string.Concat(seed.Reverse().Select(c => (char) ('a' - c)));
+			_ab = new string[2];
+			_ab[0] = seed;
+			_ab[1] = string.Concat(seed.Reverse().Select(c => (char) ('a' - c)));
         }
 
         public char CharAt(int position)
         {
-            if (position >= ContentLength)
-            {
-                throw new ArgumentException("Position too large");
-            }
+			Debug.Assert(position < ContentLength, "Position too large");
+            
             if (ContentLength <= Seed.Length)
             {
                 // No expansion has taken place
@@ -89,10 +90,9 @@ namespace Day_16
 				var step = levelPow * 4;
 				return (blockNumber - offset) % step == 0 ? '0' : '1';
             }
-            else
-			{
-				return blockNumber % 2 == 0 ? Seed[posInBlock] : _b[posInBlock];
-			}
-        }
+
+			var idx = blockNumber % 2;
+			return _ab[idx][posInBlock];
+		}
 	}
 }
