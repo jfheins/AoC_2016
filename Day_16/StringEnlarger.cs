@@ -23,8 +23,6 @@ namespace Day_16
             return result.Substring(0, length);
         }
 
-
-
         public static string CalculateChecksum(IEnumerable<char> content)
         {
             var checksum = string.Concat(content.Pairwise().Select(ChecksumBitFromPair));
@@ -32,9 +30,13 @@ namespace Day_16
                 return CalculateChecksum(checksum);
             
             return checksum;
-        }
+		}
+		public static string CalculateChecksum(IEnumerable<char> content, int diskSize)
+		{
+			return (~diskSize & (diskSize + 1)).ToString();
+		}
 
-        private static char ChecksumBitFromPair(Tuple<char, char> pair)
+		private static char ChecksumBitFromPair(Tuple<char, char> pair)
         {
             return pair.Item1 == pair.Item2 ? '1' : '0';
         }
@@ -80,17 +82,9 @@ namespace Day_16
 				return (blockNumber - offset) % step == 0 ? '0' : '1';
             }
             else
-            {
-                if (blockNumber % 2 == 0)
-                {
-                    // 'a' block
-                    return Seed[posInBlock];
-                }
-                else
-                {
-                    return _b[posInBlock];
-                }
-            }
+			{
+				return blockNumber % 2 == 0 ? Seed[posInBlock] : _b[posInBlock];
+			}
         }
 	}
 }
