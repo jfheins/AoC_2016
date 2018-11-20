@@ -26,7 +26,7 @@ namespace Day_16
             sw.Restart();
             var provider = new CharProvider(seed, diskLength);
             var expContent = string.Concat(Enumerable.Range(0, diskLength).Select(x => provider.CharAt(x)));
-            checksum = StringEnlarger.CalculateChecksum(expContent);
+            checksum = StringEnlarger.CalculateChecksum(expContent, diskLength);
 			sw.Stop();
 
 			Console.WriteLine($"Checksum for seed {seed} expanded to {diskLength} is {checksum}.");

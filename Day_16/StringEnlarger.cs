@@ -33,7 +33,15 @@ namespace Day_16
 		}
 		public static string CalculateChecksum(IEnumerable<char> content, int diskSize)
 		{
-			return (~diskSize & (diskSize + 1)).ToString();
+			// One block of bits will become one bit of the checksum
+			var blockSize = diskSize & ~(diskSize - 1);
+			return string.Concat(content.Chunks(blockSize).Select(ChecksumBitFromBlock));
+		}
+
+		private static char ChecksumBitFromBlock(IEnumerable<char> block)
+		{
+			var parity = block.Sum(bit => bit - '0') % 2;
+			return (char) ((1 - parity) + '0');
 		}
 
 		private static char ChecksumBitFromPair(Tuple<char, char> pair)
