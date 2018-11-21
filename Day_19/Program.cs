@@ -23,10 +23,12 @@ namespace Day_19
 		private readonly bool[] _isEmpty;
 		private readonly int _size;
 
+		private int participants;
 
 		public ElfCircle(int size)
 		{
 			_size = size;
+			participants = size;
 			_isEmpty = new bool[size];
 		}
 
@@ -44,6 +46,7 @@ namespace Day_19
 				if (robbedElf == null)
 					break;
 				_isEmpty[robbedElf.Value] = true;
+				participants--;
 				nextElf = GetLeftNeighborOf(elfIndex);
 			}
 
@@ -56,6 +59,23 @@ namespace Day_19
 			{
 				var index = (elf + i) % _size;
 				if (!_isEmpty[index])
+					return index;
+			}
+
+			return null;
+		}
+
+		private int? GetVictimAcrossCircle(int elf)
+		{
+			var victimDistance = participants / 2;
+
+
+			for (var i = 1; i < _size; i++)
+			{
+				var index = (elf + i) % _size;
+				if (!_isEmpty[index])
+					victimDistance--;
+				if (victimDistance == 0)
 					return index;
 			}
 
