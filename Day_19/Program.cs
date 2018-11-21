@@ -36,24 +36,27 @@ namespace Day_19
 			}
 
 			var elfIndex = 0;
-			while (true)
+			int? nextElf = 0;
+			while (nextElf.HasValue)
 			{
+				elfIndex = nextElf.Value;
 				var robbedElf = GetLeftNeighborOf(elfIndex);
 				if (robbedElf == null)
-					return elfIndex + 1;
+					break;
 				_isEmpty[robbedElf.Value] = true;
-				elfIndex++;
+				nextElf = GetLeftNeighborOf(elfIndex);
 			}
+
+			return elfIndex + 1;
 		}
 
 		private int? GetLeftNeighborOf(int elf)
 		{
-			for (int i = elf + 1; i != elf; i = (i+1) % _size)
+			for (int i = 1; i < _size; i++)
 			{
-				if (!_isEmpty[i])
-				{
-					return i;
-				}
+				var index = (elf + i) % _size;
+				if (!_isEmpty[index])
+					return index;
 			}
 
 			return null;
