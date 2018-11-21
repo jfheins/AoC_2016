@@ -15,20 +15,30 @@ namespace Day_20
 
 			var blackListedRanges = input.Select(IpRange.FromString).ToList();
 
+			var allowedIPs = new List<uint>();
 			uint candidate = 0;
-			List<IpRange> blockingRanges;
 
 			while(true)
 			{
-				blockingRanges = blackListedRanges.Where(r => r.CompareNumber(candidate) == CompareResult.InRange).ToList();
+				var blockingRanges = blackListedRanges.Where(r => r.CompareNumber(candidate) == CompareResult.InRange).ToList();
 
 				if (!blockingRanges.Any())
-					break;
-
-				candidate = blockingRanges.Select(range => range.UpperBound).Max() + 1;
+				{
+					allowedIPs.Add(candidate);
+					if (candidate == uint.MaxValue)
+						break;
+					candidate++;
+				}
+				else
+				{
+					var blockMax = blockingRanges.Select(range => range.UpperBound).Max();
+					if (blockMax == uint.MaxValue)
+						break;
+					candidate = blockMax + 1;
+				}
 			}
 
-			Console.WriteLine(candidate);
+			Console.WriteLine(allowedIPs.Count);
 			Console.ReadLine();
 		}
 	}
