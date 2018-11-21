@@ -10,7 +10,7 @@ namespace Day_19
 		private static void Main()
 		{
 			var input = 5;
-			//input = 30143;
+			input = 30143;
 			input = 3014387;
 
 			var calculator = new ElfCircle(input);
@@ -49,7 +49,7 @@ namespace Day_19
 			var currentElf = _circle.First;
 			while (_circle.Count > 1)
 			{
-				var robbedElf = GetLeftNeighborOf(currentElf);
+				var robbedElf = GetVictimAcrossCircle(currentElf);
 
 				if (robbedElf == null)
 					break; // No elf left to rob
@@ -67,6 +67,14 @@ namespace Day_19
 		private LinkedListNode<Elf> GetLeftNeighborOf(LinkedListNode<Elf> elf)
 		{
 			return elf.Next ?? _circle.First;
+		}
+
+		private LinkedListNode<Elf> GetVictimAcrossCircle(LinkedListNode<Elf> elf)
+		{
+			for (int i = 0; i < _circle.Count / 2; i++)
+				elf = GetLeftNeighborOf(elf);
+
+			return elf;
 		}
 
 		private struct Elf
