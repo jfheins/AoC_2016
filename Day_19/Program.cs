@@ -42,7 +42,7 @@ namespace Day_19
 			while (nextElf.HasValue)
 			{
 				elfIndex = nextElf.Value;
-				var robbedElf = GetLeftNeighborOf(elfIndex);
+				var robbedElf = GetVictimAcrossCircle(elfIndex);
 				if (robbedElf == null)
 					break;
 				_isEmpty[robbedElf.Value] = true;
