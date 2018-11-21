@@ -31,7 +31,7 @@ namespace Day_19
 	internal class ElfCircle
 	{
 		private readonly int _initialSize;
-		private LinkedList<Elf>  _circle;
+		private readonly LinkedList<Elf> _circle;
 
 		public ElfCircle(int size)
 		{
@@ -49,33 +49,33 @@ namespace Day_19
 			var currentElf = _circle.First;
 			while (_circle.Count > 1)
 			{
-				var robbedElf = currentElf.Next;
+				var robbedElf = GetLeftNeighborOf(currentElf);
+
 				if (robbedElf == null)
-				{
-					// End of List
-					robbedElf = _circle.First;
-					if (robbedElf == null)
-						break; // No elf left to rob
-					
-				}
+					break; // No elf left to rob
+
 				_circle.Remove(robbedElf);
-				currentElf = currentElf.Next ?? _circle.First;
+				currentElf = GetLeftNeighborOf(currentElf);
 
 				if (_circle.Count % 10000 == 0)
-				{
 					Console.WriteLine(_circle.Count);
-				}
 			}
 
 			return _circle.First.Value.Number;
 		}
 
+		private LinkedListNode<Elf> GetLeftNeighborOf(LinkedListNode<Elf> elf)
+		{
+			return elf.Next ?? _circle.First;
+		}
+
 		private struct Elf
 		{
 			/// <summary>
-			/// Number in the initial circle, starts with 1
+			///     Number in the initial circle, starts with 1
 			/// </summary>
-			public int Number;
+			public readonly int Number;
+
 			public Elf(int number)
 			{
 				Number = number;
