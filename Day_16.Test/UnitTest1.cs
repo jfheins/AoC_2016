@@ -52,5 +52,13 @@ namespace Day_16.Test
 			var checksum = StringEnlarger.CalculateChecksum(diskContent);
 			Assert.AreEqual(checksum, "10111110010110110");
 		}
+
+		[TestMethod]
+		public void TestChecksum2()
+		{
+			var diskContent = StringEnlarger.EnlargeToLength("10011111011011001", 272);
+			var checksum = StringEnlarger.CalculateChecksum(diskContent, 272);
+			Assert.AreEqual(checksum, "10111110010110110");
+		}
 	}
 }
