@@ -41,8 +41,12 @@ namespace Day_16
 
 		private static char ChecksumBitFromBlock(IEnumerable<char> block)
 		{
-			var parity = block.Sum(bit => bit - '0') % 2;
-			return (char) ((1 - parity) + '0');
+			var sum = 0;
+			foreach (var bit in block)
+			{
+				sum += bit - '0';
+			}
+			return sum % 2 == 0 ? '1' : '0';
 		}
 
 		private static char ChecksumBitFromPair(Tuple<char, char> pair)
