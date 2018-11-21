@@ -10,14 +10,14 @@ namespace Day_19
 		private static void Main()
 		{
 			var input = 5;
-			input = 30143;
+			//input = 50143;
 			input = 3014387;
 
 			var calculator = new ElfCircle(input);
-			Console.WriteLine($"In a circle with {input} elves, the richest wil be at:");
+			Console.WriteLine($"In a circle with {input} elves, the richest wil be ...");
 			var sw = new Stopwatch();
 			sw.Start();
-			Console.WriteLine(calculator.CalculateBillGates());
+			Console.WriteLine(" at: " + calculator.CalculateBillGates());
 			sw.Stop();
 
 			var duration = sw.ElapsedMilliseconds / 1000f;
@@ -47,21 +47,34 @@ namespace Day_19
 				return 1;
 
 			var currentElf = _circle.First;
+			var nextvictimElf = GetVictimAcrossCircle(currentElf);
 			while (_circle.Count > 1)
 			{
-				var robbedElf = GetVictimAcrossCircle(currentElf);
+				var robbedElf = nextvictimElf;
 
 				if (robbedElf == null)
 					break; // No elf left to rob
 
-				_circle.Remove(robbedElf);
-				currentElf = GetLeftNeighborOf(currentElf);
+				if (_circle.Count % 2 == 1)
+					nextvictimElf = GetLeftNeighborOf(nextvictimElf);
+				else
+					nextvictimElf = GetRightNeighborOf(nextvictimElf);
 
-				if (_circle.Count % 10000 == 0)
+				_circle.Remove(robbedElf);
+
+				currentElf = GetLeftNeighborOf(currentElf);
+				nextvictimElf = GetLeftNeighborOf(nextvictimElf);
+
+				if (_circle.Count % 100000 == 0)
 					Console.WriteLine(_circle.Count);
 			}
 
 			return _circle.First.Value.Number;
+		}
+
+		private LinkedListNode<Elf> GetRightNeighborOf(LinkedListNode<Elf> elf)
+		{
+			return elf.Previous ?? _circle.Last;
 		}
 
 		private LinkedListNode<Elf> GetLeftNeighborOf(LinkedListNode<Elf> elf)
