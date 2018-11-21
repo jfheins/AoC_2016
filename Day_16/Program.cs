@@ -25,7 +25,7 @@ namespace Day_16
 
             sw.Restart();
             var provider = new CharProvider(seed, diskLength);
-            var expContent = string.Concat(Enumerable.Range(0, diskLength).Select(x => provider.CharAt(x)));
+            var expContent = Enumerable.Range(0, diskLength).Select(x => provider.CharAt(x));
             var checksum = StringEnlarger.CalculateChecksum(expContent, diskLength);
 			sw.Stop();
 
