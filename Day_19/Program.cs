@@ -2,11 +2,12 @@
 
 namespace Day_19
 {
-	class Program
+	internal class Program
 	{
-		static void Main()
+		private static void Main()
 		{
 			var input = 5;
+			input = 3014387;
 
 			var calculator = new ElfCircle(input);
 			Console.WriteLine($"In a circle with {input} elves, the richest wil be at:");
@@ -16,11 +17,12 @@ namespace Day_19
 		}
 	}
 
-	class ElfCircle
+	internal class ElfCircle
 	{
-		private readonly int _size;
 		// Index: Elf number minus 1, false if that elf still has presents
 		private readonly bool[] _isEmpty;
+		private readonly int _size;
+
 
 		public ElfCircle(int size)
 		{
@@ -31,9 +33,7 @@ namespace Day_19
 		public int CalculateBillGates()
 		{
 			if (_size % 2 == 0)
-			{
 				return 1;
-			}
 
 			var elfIndex = 0;
 			int? nextElf = 0;
@@ -52,7 +52,7 @@ namespace Day_19
 
 		private int? GetLeftNeighborOf(int elf)
 		{
-			for (int i = 1; i < _size; i++)
+			for (var i = 1; i < _size; i++)
 			{
 				var index = (elf + i) % _size;
 				if (!_isEmpty[index])
