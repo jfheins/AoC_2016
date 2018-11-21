@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Day_19
 {
@@ -7,11 +10,19 @@ namespace Day_19
 		private static void Main()
 		{
 			var input = 5;
+			//input = 30143;
 			input = 3014387;
 
 			var calculator = new ElfCircle(input);
 			Console.WriteLine($"In a circle with {input} elves, the richest wil be at:");
+			var sw = new Stopwatch();
+			sw.Start();
 			Console.WriteLine(calculator.CalculateBillGates());
+			sw.Stop();
+
+			var duration = sw.ElapsedMilliseconds / 1000f;
+			Console.WriteLine($"It took {duration:0.000} seconds.");
+			// Debug: 3 sec Release: 1,15s
 
 			Console.ReadLine();
 		}
@@ -19,67 +30,56 @@ namespace Day_19
 
 	internal class ElfCircle
 	{
-		// Index: Elf number minus 1, false if that elf still has presents
-		private readonly bool[] _isEmpty;
-		private readonly int _size;
-
-		private int participants;
+		private readonly int _initialSize;
+		private LinkedList<Elf>  _circle;
 
 		public ElfCircle(int size)
 		{
-			_size = size;
-			participants = size;
-			_isEmpty = new bool[size];
+			_initialSize = size;
+
+			var elfes = Enumerable.Range(1, size).Select(number => new Elf(number));
+			_circle = new LinkedList<Elf>(elfes);
 		}
 
 		public int CalculateBillGates()
 		{
-			if (_size % 2 == 0)
+			if (_initialSize % 2 == 0)
 				return 1;
 
-			var elfIndex = 0;
-			int? nextElf = 0;
-			while (nextElf.HasValue)
+			var currentElf = _circle.First;
+			while (_circle.Count > 1)
 			{
-				elfIndex = nextElf.Value;
-				var robbedElf = GetVictimAcrossCircle(elfIndex);
+				var robbedElf = currentElf.Next;
 				if (robbedElf == null)
-					break;
-				_isEmpty[robbedElf.Value] = true;
-				participants--;
-				nextElf = GetLeftNeighborOf(elfIndex);
+				{
+					// End of List
+					robbedElf = _circle.First;
+					if (robbedElf == null)
+						break; // No elf left to rob
+					
+				}
+				_circle.Remove(robbedElf);
+				currentElf = currentElf.Next ?? _circle.First;
+
+				if (_circle.Count % 10000 == 0)
+				{
+					Console.WriteLine(_circle.Count);
+				}
 			}
 
-			return elfIndex + 1;
+			return _circle.First.Value.Number;
 		}
 
-		private int? GetLeftNeighborOf(int elf)
+		private struct Elf
 		{
-			for (var i = 1; i < _size; i++)
+			/// <summary>
+			/// Number in the initial circle, starts with 1
+			/// </summary>
+			public int Number;
+			public Elf(int number)
 			{
-				var index = (elf + i) % _size;
-				if (!_isEmpty[index])
-					return index;
+				Number = number;
 			}
-
-			return null;
-		}
-
-		private int? GetVictimAcrossCircle(int elf)
-		{
-			var victimDistance = participants / 2;
-
-
-			for (var i = 1; i < _size; i++)
-			{
-				var index = (elf + i) % _size;
-				if (!_isEmpty[index])
-					victimDistance--;
-				if (victimDistance == 0)
-					return index;
-			}
-
-			return null;
 		}
 	}
 }
