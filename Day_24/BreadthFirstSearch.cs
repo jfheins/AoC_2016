@@ -6,6 +6,8 @@ namespace Day_24
 {
 	public class BreadthFirstSearch<TNode, TEdge>
 	{
+		public delegate void ProgressReporterCallback(int workingSetCount, int visitedCount);
+
 		private readonly IEqualityComparer<NodeWithPredecessor> _comparer;
 		private readonly Func<TNode, IEnumerable<TNode>> _expander;
 
@@ -36,7 +38,7 @@ namespace Day_24
 
 		public TNode[] Search(TNode initialNode,
 			Func<TNode, bool> targetPredicate,
-			Action<int, int> progressReporter = null)
+			ProgressReporterCallback progressReporter = null)
 		{
 			var visitedNodes = new HashSet<NodeWithPredecessor>(_comparer);
 			var nextNodes = new HashSet<NodeWithPredecessor>(_comparer) {new NodeWithPredecessor(initialNode)};
