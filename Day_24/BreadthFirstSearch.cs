@@ -41,6 +41,9 @@ namespace Day_24
 			var visitedNodes = new HashSet<NodeWithPredecessor>(_comparer);
 			var nextNodes = new HashSet<NodeWithPredecessor>(_comparer) {new NodeWithPredecessor(initialNode)};
 
+			if (targetPredicate(initialNode))
+				return new[] { initialNode };
+
 			while (nextNodes.Count > 0)
 			{
 				progressReporter?.Invoke(visitedNodes.Count, nextNodes.Count);
