@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Core;
 
 namespace Day_24
 {
@@ -11,66 +12,114 @@ namespace Day_24
 	{
 		private static int rows = 0;
 		private static int columns = 0;
-		private static char[][] input;
+		private static char[][] field;
 
 		static void Main(string[] args)
 		{
 			var inputText = File.ReadAllLines(@"../../../demo.txt");
-			input = inputText.Select(x => x.ToCharArray()).ToArray();
-			rows = input.Length;
-			columns = input[0].Length;
+			field = inputText.Select(x => x.ToCharArray()).ToArray();
+			rows = field.Length;
+			columns = field[0].Length;
 
-			var allNumbers = input.SelectMany(x => x).Where(char.IsDigit).ToArray();
+			var allNumbers = field.SelectMany(x => x).Where(char.IsDigit).ToArray();
+			var origin = new Coordinate(1, 1);
 
-			var bfs = new BreadthFirstSearch<Tuple<int, int>, MoveDirection>(EqualityComparer<(int, int)?>.Default, GetPossibleMovements, GetPosition);
+			var bfs = new BreadthFirstSearch<Coordinate, MoveDirection>(new CoordinateIdentical(), GetPossibleMovements, GetPosition);
+			foreach (var item in allNumbers)
+			{
+				var path = bfs.Search(origin, coords => ContentAt(coords) == item);
+				if (path == null)
+				{
+					Console.WriteLine($"Item {item} not found");
+				}
+				else
+				Console.WriteLine($"Item {item} found at {path[0]}");
+			}
+
+			Console.ReadLine();
 		}
 
-		private static (int, int)? GetPosition((int x, int y)? position, MoveDirection direction)
+		private static char ContentAt(Coordinate pos) => field[pos.Y][pos.X];
+
+		private static Coordinate GetPosition(Coordinate position, MoveDirection direction)
 		{
 			var newpos = position;
 			switch (direction)
 			{
 				case MoveDirection.Up:
-					newpos = (position.x, position.y - 1);
+					newpos = new Coordinate(position.X, position.Y - 1);
 					break;
 				case MoveDirection.Down:
-					newpos = (position.x, position.y + 1);
+					newpos = new Coordinate(position.X, position.Y + 1);
 					break;
 				case MoveDirection.Left:
-					newpos = (position.x - 1, position.y);
+					newpos = new Coordinate(position.X - 1, position.Y);
 					break;
 				case MoveDirection.Right:
-					newpos = (position.x + 1, position.y);
+					newpos = new Coordinate(position.X + 1, position.Y);
 					break;
 			}
 
-			if (input[newpos.x][newpos.y] == '#')
-			{
-				return null;
-			}
-
-			return newpos;
+			return newpos.IsValid() ? newpos : null;
 		}
 
-		private static IEnumerable<MoveDirection> GetPossibleMovements((int x, int y)? position)
+		private static IEnumerable<MoveDirection> GetPossibleMovements(Coordinate position)
 		{
 			if (position == null)
 			{
 				yield break;
 			}
-			if (position.Value.x > 0)
+			if (position.X > 0)
 				yield return MoveDirection.Left;
 
-			if (position.Value.y > 0)
+			if (position.Y > 0)
 				yield return MoveDirection.Up;
 
-			if (position.Value.x < columns - 1)
+			if (position.X < columns - 1)
 				yield return MoveDirection.Right;
 
-			if (position.Value.y < rows - 1)
+			if (position.Y < rows - 1)
 				yield return MoveDirection.Down;
+		}
+
+		public class Coordinate
+		{
+			public int X { get; }
+			public int Y { get; }
+
+			public Coordinate(int x, int y)
+			{
+				X = x;
+				Y = y;
+			}
+
+			public bool IsValid() => ContentAt(this) != '#';
+
+			public override string ToString()
+			{
+				return $"({X}|{Y})";
+			}
+		}
+
+		internal class CoordinateIdentical : EqualityComparer<Coordinate>
+		{
+			public override bool Equals(Coordinate a, Coordinate b)
+			{
+				if (a == null && b == null)
+					return true;
+				if (a == null || b == null)
+					return false;
+
+				return a.X == b.X && a.Y == b.Y;
+			}
+
+			public override int GetHashCode(Coordinate point)
+			{
+				return HashCode.Combine(point.X, point.Y);
+			}
 		}
 	}
 
 	public enum MoveDirection { Up, Down, Left, Right };
+
 }

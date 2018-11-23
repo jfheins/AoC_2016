@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Day_24;
+using Core;
 
 namespace Day_11
 {
