@@ -42,7 +42,7 @@ namespace Day_11
 
                 Console.WriteLine($"into {nextStates.Count} unique new nodes.");
 
-                if (nextStates.AsParallel().Any(s => s.IsFinalState()))
+                if (nextStates.Any(s => s.IsFinalState()))
                     break;
             }
 

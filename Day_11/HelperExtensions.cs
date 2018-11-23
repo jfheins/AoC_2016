@@ -15,7 +15,7 @@ namespace Day_11
                 .Select(x => x.index);
         }
 
-        public static IEnumerable<T> AsEnumerable<T>(this T item)
+        public static IEnumerable<T> ToEnumerable<T>(this T item)
         {
             yield return item;
         }
