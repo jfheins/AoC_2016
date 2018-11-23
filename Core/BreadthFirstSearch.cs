@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Day_24
+namespace Core
 {
 	public class BreadthFirstSearch<TNode, TEdge>
 	{

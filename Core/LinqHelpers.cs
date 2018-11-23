@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
-namespace Day_16
+namespace Core
 {
-    public static class HelperMethods
+    public static class LinqHelpers
     {
         /// <summary>
         ///    Verpackt den angegebenen Wert in eine Enumeration mit einem Element.
@@ -15,6 +16,13 @@ namespace Day_16
         public static IEnumerable<T> ToEnumerable<T>(this T item)
         {
             yield return item;
+        }
+
+        public static IEnumerable<int> IndexWhere<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+        {
+            return source.Select((value, index) => new { value, index })
+                .Where(x => predicate(x.value))
+                .Select(x => x.index);
         }
 
         /// <summary>
@@ -83,5 +91,5 @@ namespace Day_16
 			do yield return e.Current;
 			while (innerMoveNext());
 		}
-	}
+    }
 }
