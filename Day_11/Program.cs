@@ -29,7 +29,7 @@ namespace Day_11
 			{
 				sw.Start();
 				var bfs = new BreadthFirstSearch<State, Transition>(comparer, s => s.GetPossibleSuccessorStates());
-				path = bfs.Search(initialState, n => n.IsFinalState());
+				path = bfs.FindFirst(initialState, n => n.IsFinalState());
 				sw.Stop();
 
 				var duration = sw.ElapsedMilliseconds / 1000f;

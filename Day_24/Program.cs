@@ -16,7 +16,7 @@ namespace Day_24
 
 		static void Main(string[] args)
 		{
-			var inputText = File.ReadAllLines(@"../../../demo.txt");
+			var inputText = File.ReadAllLines(@"../../../input.txt");
 			field = inputText.Select(x => x.ToCharArray()).ToArray();
 			rows = field.Length;
 			columns = field[0].Length;
@@ -25,14 +25,12 @@ namespace Day_24
 			var origin = new Coordinate(1, 1);
 
 			var bfs = new BreadthFirstSearch<Coordinate, MoveDirection>(new CoordinateIdentical(), GetPossibleMovements, GetPosition);
-			foreach (var item in allNumbers)
+
+			var result = bfs.FindAll(origin, coords => char.IsDigit(ContentAt(coords)));
+
+			foreach (var path in result)
 			{
-				var path = bfs.Search(origin, coords => ContentAt(coords) == item);
-				if (path == null)
-				{
-					Console.WriteLine($"Item {item} not found");
-				}
-				else
+				var item = ContentAt(path[0]);
 				Console.WriteLine($"Item {item} found at {path[0]}");
 			}
 
