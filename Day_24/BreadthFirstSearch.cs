@@ -15,27 +15,41 @@ namespace Day_24
 		/// <param name="comparer">Comparison function that determines node equality</param>
 		/// <param name="expander">Callback to get the possible edges</param>
 		/// <param name="combiner">Callback to combine a source node and an edge to a (possibly new) node. May return null</param>
-		public BreadthFirstSearch(IEqualityComparer<TNode> comparer, Func<TNode, IEnumerable<TEdge>> expander,
+		public BreadthFirstSearch(IEqualityComparer<TNode> comparer,
+			Func<TNode, IEnumerable<TEdge>> expander,
 			Func<TNode, TEdge, TNode> combiner)
 		{
 			_comparer = new NodeComparer(comparer);
 			_expander = node => expander(node).Select(edge => combiner(node, edge)).Where(x => x != null);
 		}
 
-		public TNode[] Search(TNode initialNode, Func<TNode, bool> targetPredicate, Action<int, int> progressReporter)
+		/// <summary>
+		///     Prepares a breadth first search.
+		/// </summary>
+		/// <param name="comparer">Comparison function that determines node equality</param>
+		/// <param name="expander">Callback to get the possible nodes from a source node</param>
+		public BreadthFirstSearch(IEqualityComparer<TNode> comparer, Func<TNode, IEnumerable<TNode>> expander)
+		{
+			_comparer = new NodeComparer(comparer);
+			_expander = expander;
+		}
+
+		public TNode[] Search(TNode initialNode,
+			Func<TNode, bool> targetPredicate,
+			Action<int, int> progressReporter = null)
 		{
 			var visitedNodes = new HashSet<NodeWithPredecessor>(_comparer);
 			var nextNodes = new HashSet<NodeWithPredecessor>(_comparer) {new NodeWithPredecessor(initialNode)};
 
 			while (nextNodes.Count > 0)
 			{
-				progressReporter(visitedNodes.Count, nextNodes.Count);
+				progressReporter?.Invoke(visitedNodes.Count, nextNodes.Count);
 
 				visitedNodes.UnionWith(nextNodes);
 
 				var expanded = nextNodes.AsParallel()
 					.SelectMany(sourceNode => _expander(sourceNode.Current)
-						.Select(dest => new NodeWithPredecessor(sourceNode, dest))
+						.Select(dest => new NodeWithPredecessor(dest, sourceNode))
 						.Where(dest => !visitedNodes.Contains(dest)));
 
 				nextNodes = new HashSet<NodeWithPredecessor>(expanded, _comparer);
@@ -70,23 +84,14 @@ namespace Day_24
 
 		private class NodeWithPredecessor
 		{
-			public NodeWithPredecessor(TNode initial)
+			public NodeWithPredecessor(TNode current, NodeWithPredecessor predecessor = null)
 			{
-				Predecessor = null;
-				Current = initial;
-				Length = 0;
-			}
-
-			public NodeWithPredecessor(NodeWithPredecessor old, TNode current)
-			{
-				Predecessor = old;
+				Predecessor = predecessor;
 				Current = current;
-				Length = old.Length + 1;
 			}
 
-			public int Length { get; }
 			public TNode Current { get; }
-			public NodeWithPredecessor Predecessor { get; }
+			private NodeWithPredecessor Predecessor { get; }
 
 			public IEnumerable<TNode> GetHistory()
 			{
