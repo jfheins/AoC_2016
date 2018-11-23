@@ -16,7 +16,7 @@ namespace Day_24
 		/// </summary>
 		/// <param name="comparer">Comparison function that determines node equality</param>
 		/// <param name="expander">Callback to get the possible edges</param>
-		/// <param name="combiner">Callback to combine a source node and an edge to a (possibly new) node. May return null</param>
+		/// <param name="combiner">Callback to combine a source node and an edge to a (possibly new) node. May return null.</param>
 		public BreadthFirstSearch(IEqualityComparer<TNode> comparer,
 			Func<TNode, IEnumerable<TEdge>> expander,
 			Func<TNode, TEdge, TNode> combiner)
