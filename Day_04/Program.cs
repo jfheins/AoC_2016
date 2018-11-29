@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using LanguageExt;
@@ -10,7 +11,8 @@ namespace Day_04
     {
         private static void Main(string[] args)
         {
-            var input = new[] { "aaaaa-bbb-z-y-x-123[abxyz]","a-b-c-d-e-f-g-h-987[abcde]", "not -a-real-room-404[oarel]", "totally -real-room-200[decoy]"};
+            var input = new[] { "aaaaa-bbb-z-y-x-123[abxyz]","a-b-c-d-e-f-g-h-987[abcde]", "not-a-real-room-404[oarel]", "totally -real-room-200[decoy]"};
+            input = File.ReadAllLines(@"../../../input.txt");
 
             var rooms = input.Map(Room.Parse);
 
@@ -55,10 +57,12 @@ namespace Day_04
 
         public bool IsReal()
         {
-            var commonLetters = new Lst<char>(NameLettersWithOccurence
+            var lettersWithCount = NameLettersWithOccurence
                 .Where(it => it.letter != '-')
                 .OrderByDescending(it => it.count)
-                .ThenBy(it => it.letter)
+                .ThenBy(it => it.letter);
+
+            var commonLetters = new Lst<char>(lettersWithCount
                 .Take(5)
                 .Map(it => it.letter));
 
