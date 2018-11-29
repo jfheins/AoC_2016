@@ -37,16 +37,16 @@ namespace Day_04
 
         public static Option<Room> FromLine(string line)
         {
-            var pattern = new Regex(@"([\w-]+)-(\d+)-\[(\w+)\]");
+            var pattern = new Regex(@"([\w-]+)-(\d+)\[(\w+)\]");
             var groups = pattern.Match(line).Groups;
 
-            if (groups.Count != 3)
+            if (groups.Count != 4)
                 return Option<Room>.None;
 
-            if (!int.TryParse(groups[1].Value, out var sector))
+            if (!int.TryParse(groups[2].Value, out var sector))
                 return Option<Room>.None;
 
-            return new Room(groups[0].Value, sector, groups[2].Value);
+            return new Room(groups[1].Value, sector, groups[3].Value);
         }
 
         public bool IsReal()
