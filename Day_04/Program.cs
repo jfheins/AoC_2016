@@ -57,8 +57,8 @@ namespace Day_04
         {
             var commonLetters = new Lst<char>(NameLettersWithOccurence
                 .Where(it => it.letter != '-')
-                .OrderBy(it => it.letter)
-                .ThenBy(it => it.count)
+                .OrderByDescending(it => it.count)
+                .ThenBy(it => it.letter)
                 .Take(5)
                 .Map(it => it.letter));
 
