@@ -41,7 +41,7 @@ namespace Day_04
 
         public static Option<Room> Parse(string line)
         {
-            var pattern = new Regex(@"([\w-]+)-(\d+)\[(\w+)\]");
+            var pattern = new Regex(@"([\w\-]+)-(\d+)\[(\w+)\]");
             var groups = pattern.Match(line).Groups;
 
             if (groups.Count != 4)
