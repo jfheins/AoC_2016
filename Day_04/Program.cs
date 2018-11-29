@@ -10,11 +10,15 @@ namespace Day_04
     {
         private static void Main(string[] args)
         {
-            var input = @"aaaaa-bbb-z-y-x-123[abxyz]";
-            var room = Room.FromLine(input);
+            var input = new[] { "aaaaa-bbb-z-y-x-123[abxyz]","a-b-c-d-e-f-g-h-987[abcde]", "not -a-real-room-404[oarel]", "totally -real-room-200[decoy]"};
 
-            room.IfSome((r) => Console.WriteLine(r.IsReal()));
+            var rooms = input.Map(Room.Parse);
 
+            var sectorSum = rooms.Somes()
+                .Where(r => r.IsReal())
+                .Sum(r => r.SectorId);
+
+            Console.WriteLine(sectorSum);
             Console.ReadLine();
         }
     }
@@ -35,7 +39,7 @@ namespace Day_04
         private IEnumerable<(char letter, int count)> NameLettersWithOccurence =>
             Name.GroupBy(x => x).Map(group => (letter: group.Key, count: group.Count()));
 
-        public static Option<Room> FromLine(string line)
+        public static Option<Room> Parse(string line)
         {
             var pattern = new Regex(@"([\w-]+)-(\d+)\[(\w+)\]");
             var groups = pattern.Match(line).Groups;
