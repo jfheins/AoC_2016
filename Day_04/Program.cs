@@ -11,16 +11,25 @@ namespace Day_04
     {
         private static void Main(string[] args)
         {
-            var input = new[] { "aaaaa-bbb-z-y-x-123[abxyz]","a-b-c-d-e-f-g-h-987[abcde]", "not-a-real-room-404[oarel]", "totally -real-room-200[decoy]"};
+            var input = new[]
+            {
+                "aaaaa-bbb-z-y-x-123[abxyz]", "a-b-c-d-e-f-g-h-987[abcde]", "not-a-real-room-404[oarel]",
+                "totally -real-room-200[decoy]"
+            };
             input = File.ReadAllLines(@"../../../input.txt");
 
             var rooms = input.Map(Room.Parse);
 
-            var sectorSum = rooms.Somes()
-                .Where(r => r.IsReal())
-                .Sum(r => r.SectorId);
+            var realRooms = rooms.Somes()
+                .Filter(r => r.IsReal())
+                .ToSeq();
 
-            Console.WriteLine(sectorSum);
+            foreach (var room in realRooms)
+            {
+                Console.WriteLine(room.SectorId + ": " +  room.DecryptedName);
+            }
+
+            Console.WriteLine("Sector sum: " + realRooms.Sum(r => r.SectorId));
             Console.ReadLine();
         }
     }
@@ -40,6 +49,17 @@ namespace Day_04
 
         private IEnumerable<(char letter, int count)> NameLettersWithOccurence =>
             Name.GroupBy(x => x).Map(group => (letter: group.Key, count: group.Count()));
+
+        public string DecryptedName => string.Concat(Name.Map(c => ShiftLetter(c, SectorId)));
+
+        private char ShiftLetter(char letter, int count)
+        {
+            if (letter == '-')
+                return ' ';
+
+            var position = letter - 'a';
+            return (char) ('a' + (position + count) % 26);
+        }
 
         public static Option<Room> Parse(string line)
         {
