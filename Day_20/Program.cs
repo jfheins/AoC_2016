@@ -38,8 +38,9 @@ namespace Day_20
 				}
 			}
 
-			Console.WriteLine(allowedIPs.Count);
-			Console.ReadLine();
+		    Console.WriteLine("First:" + allowedIPs.First());
+		    Console.WriteLine("Overall:" + allowedIPs.Count);
+            Console.ReadLine();
 		}
 	}
 

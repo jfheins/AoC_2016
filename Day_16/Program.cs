@@ -8,7 +8,7 @@ namespace Day_16
     {
         static void Main(string[] args)
 		{
-			var seed = "10011111011011001";
+			var seed = "10001001100000001";
 			var diskLength = 272;
             diskLength = 35651584;
 

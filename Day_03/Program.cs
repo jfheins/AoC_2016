@@ -15,8 +15,8 @@ namespace Day_03
 
 		    var blocks = input.Chunks(3).Select(x => x.ToArray());
 
-			//var allShapes = input.Select(GetSidesOrdered);
-		    var allShapes = blocks.SelectMany(GetSidesFromChunks);
+			var allShapes = input.Select(GetSidesOrdered);
+		     allShapes = blocks.SelectMany(GetSidesFromChunks);
             var triangles = allShapes.Where(x => x.a + x.b > x.c);
 
 			Console.WriteLine(triangles.Count());

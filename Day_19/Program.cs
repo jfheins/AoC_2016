@@ -11,7 +11,7 @@ namespace Day_19
 		{
 			var input = 5;
 			//input = 50143;
-			input = 3014387;
+			input = 3001330;
 
 			var calculator = new ElfCircle(input);
 			Console.WriteLine($"In a circle with {input} elves, the richest wil be ...");
@@ -43,9 +43,6 @@ namespace Day_19
 
 		public int CalculateBillGates()
 		{
-			if (_initialSize % 2 == 0)
-				return 1;
-
 			var currentElf = _circle.First;
 			var nextvictimElf = GetVictimAcrossCircle(currentElf);
 			while (_circle.Count > 1)
