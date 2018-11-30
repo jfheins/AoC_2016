@@ -47,8 +47,8 @@ namespace Day_24
 				var others = bfs.FindAll(numberPositions[number], coords => ContentAt(coords) > number);
 				foreach (var other in others)
 				{
-					var edge1 = string.Concat(number, ContentAt(other[0]));
-					var edge2 = string.Concat(ContentAt(other[0]), number);
+					var edge1 = string.Concat(number, ContentAt(other.Target));
+					var edge2 = string.Concat(ContentAt(other.Target), number);
 					var edgeLength = other.Length - 1;
 					distances.Add(edge1, edgeLength);
 					distances.Add(edge2, edgeLength);

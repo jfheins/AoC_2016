@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <Reference Include="LanguageExt.Core">
-      <HintPath>..\..\..\Users\q447843\.nuget\packages\languageext.core\3.1.13\lib\netstandard2.0\LanguageExt.Core.dll</HintPath>
+      <HintPath>C:\Users\Julius\.nuget\packages\languageext.core\3.1.13\lib\netstandard2.0\LanguageExt.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
 
