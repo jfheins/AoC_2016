@@ -34,9 +34,7 @@ namespace Day_24
 			}
 
 			foreach (var position in numberPositions)
-			{
 				Console.WriteLine($"Number {position.Key} found at {position.Value}");
-			}
 
 			var bfs = new BreadthFirstSearch<Coordinate, MoveDirection>(new CoordinateIdentical(), GetPossibleMovements,
 				GetPosition);

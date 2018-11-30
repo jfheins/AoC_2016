@@ -5,10 +5,9 @@ using System.Linq;
 
 namespace Day_20
 {
-	class Program
+	internal class Program
 	{
-
-		static void Main(string[] args)
+		private static void Main(string[] args)
 		{
 			var input = new[] {"5-8", "0-2", "4-7"};
 			input = File.ReadAllLines(@"../../../input.txt");
@@ -18,9 +17,10 @@ namespace Day_20
 			var allowedIPs = new List<uint>();
 			uint candidate = 0;
 
-			while(true)
+			while (true)
 			{
-				var blockingRanges = blackListedRanges.Where(r => r.CompareNumber(candidate) == CompareResult.InRange).ToList();
+				var blockingRanges = blackListedRanges.Where(r => r.CompareNumber(candidate) == CompareResult.InRange)
+					.ToList();
 
 				if (!blockingRanges.Any())
 				{
@@ -38,9 +38,9 @@ namespace Day_20
 				}
 			}
 
-		    Console.WriteLine("First:" + allowedIPs.First());
-		    Console.WriteLine("Overall:" + allowedIPs.Count);
-            Console.ReadLine();
+			Console.WriteLine("First:" + allowedIPs.First());
+			Console.WriteLine("Overall:" + allowedIPs.Count);
+			Console.ReadLine();
 		}
 	}
 
@@ -63,5 +63,10 @@ namespace Day_20
 		}
 	}
 
-	public enum CompareResult { Below, InRange, Above }
+	public enum CompareResult
+	{
+		Below,
+		InRange,
+		Above
+	}
 }

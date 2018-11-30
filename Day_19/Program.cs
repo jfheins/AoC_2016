@@ -30,8 +30,8 @@ namespace Day_19
 
 	internal class ElfCircle
 	{
-		private readonly int _initialSize;
 		private readonly LinkedList<Elf> _circle;
+		private readonly int _initialSize;
 
 		public ElfCircle(int size)
 		{
@@ -81,7 +81,7 @@ namespace Day_19
 
 		private LinkedListNode<Elf> GetVictimAcrossCircle(LinkedListNode<Elf> elf)
 		{
-			for (int i = 0; i < _circle.Count / 2; i++)
+			for (var i = 0; i < _circle.Count / 2; i++)
 				elf = GetLeftNeighborOf(elf);
 
 			return elf;
