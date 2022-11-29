@@ -17,6 +17,10 @@ namespace Core
 			yield return item;
 		}
 
+		public static IEnumerable<(T item, int count)> Histogram<T>(this IEnumerable<T> source) => source.Histogram(x => x);
+		public static IEnumerable<(TKey item, int count)> Histogram<T, TKey>(this IEnumerable<T> source, Func<T, TKey> keySelector)
+			=> source.ToLookup(keySelector).Select(group => (group.Key, group.Count()));
+
 		public static IEnumerable<int> IndexWhere<T>(this IEnumerable<T> source, Func<T, bool> predicate)
 		{
 			return source.Select((value, index) => new {value, index})
